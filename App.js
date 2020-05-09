@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const url = require('url');
 const pool = require('./conf');
-const port = 8800;
+const port = process.env.PORT || 8800;
 
 // Support JSON-encoded bodies
 app.use(bodyParser.json());
