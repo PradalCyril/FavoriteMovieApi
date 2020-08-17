@@ -116,6 +116,7 @@ passport.use(new LocalStrategy(
         pool.query('SELECT password, email FROM users WHERE email = ?', [email], (err, res) => {
             let hash = res[0].password;
             const userPassword = bcrypt.hashSync(password, 5)
+            console.log('hash : ', hash, 'Broo : ', userPassword);
             let isSame = bcrypt.compareSync(userPassword, hash)
             if (err) {
                 return cb(err, false, null)
