@@ -115,20 +115,17 @@ passport.use(new LocalStrategy(
         if (!email || !password) { return cb(null, false, req.flash('message', 'All fields are required.')); }
         pool.query('SELECT password, email FROM users WHERE email = ?', [email], (err, res) => {
             let hash = res[0].password;
-            const response = bcrypt.compareSync(password, hash).then((result) => {
-                console.log("result", result)
-                if (result) {
-                    const user = { email: res[0].email };
-                    return cb(null, user);
-                    // do stuff
-                } else {
-                    return cb(null, false, { message: 'Incorrect email ou password.' })
-                    // do other stuff
-                }
-            })
-                .catch((err) => console.error('ERREUR G2N2RALE : ', err))
-            console.log(response);
-            return response;
+            const userPassword = bcrypt.hashSync(password, 5)
+            let isSame = bcrypt.compareSync(userPassword, hash)
+            if (err) {
+                return cb(err, false, null)
+            }
+            if (!isSame) {
+                return cb(null, false, { message: 'Incorrect email ou password.' })
+            } else {
+                const user = { email: res[0].email };
+                return cb(null, user);
+            }
         })
 
 
