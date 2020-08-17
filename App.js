@@ -1,10 +1,11 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const url = require('url');
 const pool = require('./conf');
+var server = require('http').createServer(app);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 const port = process.env.PORT || 8800;
 
 // Support JSON-encoded bodies
@@ -122,7 +123,7 @@ passport.use(new LocalStrategy(
     }
 ));
 
-app.listen(port, (err => {
+server.listen(port, (err => {
     if (err)
         throw new Error('Something bad happened...');
     console.log(`server is listening on ${port}`);
