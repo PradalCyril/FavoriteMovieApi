@@ -25,7 +25,7 @@ app.post('/users/create', (request, response) => {
         firstname: formData.firstname,
         lastname: formData.lastname,
         email: formData.email,
-        password: formData.password
+        password: bcrypt.hashSync(formData.password, 5)
     }
     return pool.query(
         'INSERT INTO users SET ?', userData, (err, res) => {
