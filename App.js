@@ -37,11 +37,9 @@ app.post('/users/create', (request, response) => {
 
 app.post('/users/signin', function (req, response, next) {
     pool.query('SELECT password, email FROM users WHERE email = ?', [req.body.email], (err, res) => {
-        console.log(res, err);
         if (err) return console.log(err);
-        console.log("req.body.password !== res[0].password", req.body.password !== res[0].password)
         if (req.body.password !== res[0].password) return response.status(500).json({ message: 'Incorrect email ou password.' });
-        return (response.status(200).json({ user: res[0].email, flash: `${res[0].email} is connected` }))
+        return (response.status(200).json({ user: res[0].email, id: res[0].id, flash: `${res[0].email} is connected` }))
     })
 });
 
