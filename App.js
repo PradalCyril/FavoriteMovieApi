@@ -115,6 +115,7 @@ passport.use(new LocalStrategy(
         if (!email || !password) { return cb(null, false, req.flash('message', 'All fields are required.')); }
         pool.query('SELECT password, email FROM users WHERE email = ?', [email], (err, res) => {
             let hash = res[0].password;
+            console.log(password, hash);
             let isSame = bcrypt.compareSync(password, hash)
             if (err) {
                 return cb(err, false, null)
