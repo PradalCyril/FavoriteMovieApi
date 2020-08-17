@@ -8,5 +8,4 @@ database: 'heroku_64ac6370bd740ea', // le nom de la base de données,
 waitForConnections: true
 });
 
-console.log("coucou")
 module.exports = pool;

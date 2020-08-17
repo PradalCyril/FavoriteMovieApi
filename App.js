@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const url = require('url');
 const pool = require('./conf');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const port = process.env.PORT || 8800;
 
 // Support JSON-encoded bodies
@@ -93,7 +95,6 @@ app.get('/films/favorite', (request, response) => {
 });
 
 app.get('/', (request, response) => response.send('Bienvenue sur mon server'));
-
 
 passport.use(new LocalStrategy(
     {
