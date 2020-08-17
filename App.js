@@ -85,7 +85,7 @@ app.delete('/film/remove', (request, response) => {
 
 })
 
-app.get('/films/favorite', (request, response) => {
+app.get('/films/favorite/:id', (request, response) => {
     const { id } = request.params;
     return pool.query(`SELECT * from favorite_film where user_id = '${id}'`, (err, res) => {
         if (err) return console.log(err);
