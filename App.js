@@ -95,6 +95,14 @@ app.get('/films/favorite', (request, response) => {
     })
 });
 
+app.get('/users/all', (request, response) => {
+    const { id } = request.params;
+    return pool.query(`SELECT * from users`, (err, res) => {
+        if (err) return console.log(err);
+        return response.status(200).send({ payload: res });
+    })
+});
+
 app.get('/', (request, response) => response.send('Bienvenue sur mon server'));
 
 passport.use(new LocalStrategy(
