@@ -32,6 +32,16 @@ app.post('/users/create', (request, response) => {
     )
 })
 
+app.post('/users/signin', function (req, res, next) {
+    console.log(req.body);
+    passport.authenticate('local', (err, user, info) => {
+        if (err) return res.status(500).send(err)
+        if (!user) return res.status(400).json({ flash: info.message });
+        return (res.status(200).json({ user: user.email, flash: `${user.email} is connected` })
+        )
+    })(req, res, next)
+});
+
 app.get('/user/:id', (request, response) => {
     const { id } = request.params;
     return pool.query(`SELECT * from users where id = '${id}'`, (err, res) => {
@@ -83,6 +93,33 @@ app.get('/films/favorite', (request, response) => {
 });
 
 app.get('/', (request, response) => response.send('Bienvenue sur mon server'));
+
+
+passport.use(new LocalStrategy(
+    {
+        usernameField: 'email',
+        passwordField: 'password',
+        session: false
+    },
+    function (email, password, cb) {
+        if (!email || !password) { return cb(null, false, req.flash('message', 'All fields are required.')); }
+        pool.query('SELECT password, email FROM users WHERE email = ?', [email], (err, res) => {
+            let hash = res[0].password;
+            let isSame = bcrypt.compareSync(password, hash)
+            if (err) {
+                return cb(err, false, null)
+            }
+            if (!isSame) {
+                return cb(null, false, { message: 'Incorrect email ou password.' })
+            } else {
+                const user = { email: res[0].email };
+                return cb(null, user);
+            }
+        })
+
+
+    }
+));
 
 app.listen(port, (err => {
     if (err)
