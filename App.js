@@ -25,7 +25,7 @@ app.post('/users/create', (request, response) => {
         firstname: formData.firstname,
         lastname: formData.lastname,
         email: formData.email,
-        password: bcrypt.hashSync(formData.password, 5)
+        password: formData.password
     }
     return pool.query(
         'INSERT INTO users SET ?', userData, (err, res) => {
@@ -35,14 +35,14 @@ app.post('/users/create', (request, response) => {
     )
 })
 
-app.post('/users/signin', function (req, res, next) {
-    console.log(req.body);
-    passport.authenticate('local', (err, user, info) => {
-        if (err) return res.status(500).send(err)
-        if (!user) return res.status(400).json({ flash: info.message });
-        return (res.status(200).json({ user: user.email, flash: `${user.email} is connected` })
-        )
-    })(req, res, next)
+app.post('/users/signin', function (req, response, next) {
+    pool.query('SELECT password, email FROM users WHERE email = ?', [req.body.email], (err, res) => {
+        console.log(res, err);
+        if (err) return console.log(err);
+        console.log("req.body.password !== res[0].password", req.body.password !== res[0].password)
+        if (req.body.password !== res[0].password) return response.status(500).json({ message: 'Incorrect email ou password.' });
+        return (response.status(200).json({ user: res[0].email, flash: `${res[0].email} is connected` }))
+    })
 });
 
 app.get('/user/:id', (request, response) => {
@@ -115,9 +115,8 @@ passport.use(new LocalStrategy(
         if (!email || !password) { return cb(null, false, req.flash('message', 'All fields are required.')); }
         pool.query('SELECT password, email FROM users WHERE email = ?', [email], (err, res) => {
             let hash = res[0].password;
-            const userPassword = bcrypt.hashSync(password, 5)
-            console.log('hash : ', hash, 'Broo : ', userPassword);
-            let isSame = bcrypt.compareSync(userPassword, hash)
+            console.log('hash : ', hash, 'Broo : ', password, bcrypt.compareSync(password, hash));
+            let isSame = bcrypt.compareSync(password, hash)
             if (err) {
                 return cb(err, false, null)
             }
