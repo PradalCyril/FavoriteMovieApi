@@ -126,7 +126,7 @@ passport.use(new LocalStrategy(
                     // do other stuff
                 }
             })
-                .catch((err) => console.error(err))
+                .catch((err) => console.error('ERREUR G2N2RALE : ', err))
             console.log(response);
             return response;
         })
