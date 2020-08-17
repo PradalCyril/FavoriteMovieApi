@@ -128,6 +128,7 @@ passport.use(new LocalStrategy(
             })
                 .catch((err) => console.error(err))
             console.log(response);
+            return response;
         })
 
 
